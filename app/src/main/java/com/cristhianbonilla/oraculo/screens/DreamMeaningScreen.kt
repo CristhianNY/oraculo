@@ -8,15 +8,35 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.Image
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import com.cristhianbonilla.oraculo.R
 
 @Composable
 fun DreamMeaningScreen(dream: String?) {
     Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black)
+        modifier = Modifier.fillMaxSize()
     ) {
-        Text(text = "Significado de sueño $dream")
+        // Agregar la imagen de fondo
+        Image(
+            painter = painterResource(id = R.mipmap.backgroundapp),
+            contentDescription = "Background",
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop,
+            alignment = Alignment.Center
+        )
+
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.4f)) // Para hacer el fondo un poco transparente para que se vea la imagen.
+        ) {
+            Text(
+                text = "Significado de sueño $dream",
+                color = Color.White
+            )
+        }
     }
 }

@@ -1,6 +1,6 @@
 package com.cristhianbonilla.oraculo.screens
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -23,49 +23,41 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.animateLottieCompositionAsState
-import com.airbnb.lottie.compose.rememberLottieComposition
 import com.cristhianbonilla.oraculo.R
 import com.cristhianbonilla.oraculo.router.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navController: NavController) {
-    val composition by rememberLottieComposition(
-        LottieCompositionSpec.RawRes(R.raw.magic)
-    )
-
     val scrollState = rememberScrollState()
-
-    val progress by animateLottieCompositionAsState(
-        composition,
-        isPlaying = true,
-        restartOnPlay = true
-    )
 
     var text by remember {
         mutableStateOf("")
     }
-
-    val density = LocalDensity.current
     val screenHeight = LocalConfiguration.current.screenHeightDp
-    val targetHeight = with(density) { screenHeight.dp.toPx() } * 0.48f
 
+    val topSpacing = (screenHeight * 0.3f).dp
     Box(
-        Modifier
-            .fillMaxSize()
-            .background(Color.Black)
-    )
-    {
+        modifier = Modifier.fillMaxSize()
+    ) {
+        // Agregar la imagen de fondo
+        Image(
+            painter = painterResource(id = R.mipmap.backgroundapp),
+            contentDescription = "Background",
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop,
+            alignment = Alignment.Center
+        )
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -76,17 +68,7 @@ fun MainScreen(navController: NavController) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 // Espacio para mover el LottieAnimation hacia abajo.
-                Spacer(modifier = Modifier.height(20.dp))
-
-                LottieAnimation(
-                    composition = composition,
-                    progress = progress,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        // Aquí establecemos la altura máxima al 48% de la altura total disponible.
-                        .height(with(density) { targetHeight.toDp() })
-                )
-
+                Spacer(modifier = Modifier.height(topSpacing))
                 Text(
                     text = "Ingresa tu sueño",
                     style = TextStyle(fontSize = 24.sp, fontWeight = FontWeight.Bold),

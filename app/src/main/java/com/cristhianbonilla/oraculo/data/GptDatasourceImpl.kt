@@ -11,7 +11,7 @@ class GptDatasourceImpl @Inject constructor(private val gpt3Api: GptApi) :
 
     override suspend fun getDreamMeaning(request: GptRequestEntity) = getResult {
         executeNetworkAction {
-            gpt3Api.callCompletionEndpoint(request)
+            gpt3Api.getDreamFromGpt(request)
         }
     }
 }

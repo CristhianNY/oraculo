@@ -61,7 +61,6 @@ android {
             signingConfig = signingConfigs.getByName("debug")
             buildConfigField("String", "GPT3_BASE_URL", '\"' + "https://api.openai.com/" + '\"')
             buildConfigField("String", "BASE_URL", '\"' + "https://sermonsbackend.herokuapp.com/" + '\"')
-            buildConfigField("String", "PRIVATE_KEY", "\"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\"")
             buildConfigField("String", "OPENAI_ORGANIZATION", '\"' + "org-4ocQd9c7zqlbmwhZZAjBknOi" + '\"')
             resValue("string", "app_name", "DEV APPAI")
         }
@@ -71,7 +70,6 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             buildConfigField("String", "GPT3_BASE_URL", '\"' + "https://api.openai.com/" + '\"')
             buildConfigField("String", "BASE_URL", '\"' + "https://sermonsbackend.herokuapp.com/" + '\"')
-            buildConfigField("String", "PRIVATE_KEY", "\"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\"")
             buildConfigField("String", "OPENAI_ORGANIZATION", '\"' + "org-4ocQd9c7zqlbmwhZZAjBknOi" + '\"')
 
             resValue("string", "app_name", "AppAI")
@@ -97,6 +95,8 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.7.1")
     implementation("com.google.dagger:hilt-android:2.44")
     implementation("org.chromium.net:cronet-api:108.5359.79")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
+    implementation("com.google.android.gms:play-services-ads:22.1.0")
     kapt("com.google.dagger:hilt-compiler:2.44")
     implementation ("com.google.code.gson:gson:2.8.7")
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))
@@ -109,6 +109,7 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.7.1")
     implementation ("com.squareup.okhttp3:logging-interceptor:4.9.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.8.10")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

@@ -12,11 +12,11 @@ import com.cristhianbonilla.oraculo.screens.MainScreen
 
 
 @Composable
-fun Navigation() {
+fun Navigation(dreamViewModel: DreamViewModel) {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = Screen.MainScreen.route) {
         composable(Screen.MainScreen.route) {
-            MainScreen(navController = navController)
+            MainScreen(navController = navController, dreamViewModel)
         }
         composable(
             route = Screen.DetailScreen.route + "/{dream}",

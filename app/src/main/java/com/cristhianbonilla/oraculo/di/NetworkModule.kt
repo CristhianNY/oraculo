@@ -15,7 +15,6 @@ import javax.crypto.Cipher.PRIVATE_KEY
 import javax.inject.Named
 import javax.inject.Singleton
 
-private const val API_KEY = "apikey"
 private const val TIME_STAMP_KEY = "ts"
 private const val HASH_KEY = "hash"
 private const val CONTENT_TYPE_KEY = "Content-Type"
@@ -104,7 +103,7 @@ class NetworkModule {
             val requestBuilder = original.newBuilder().url(originalHttpUrl)
             requestBuilder.header(CONTENT_TYPE_KEY, CONTENT_TYPE)
             requestBuilder.header(HEADER_ACCEPT_KEY, HEADER_ACCEPT)
-            requestBuilder.addHeader("Authorization", "Bearer $PRIVATE_KEY")
+            requestBuilder.addHeader("Authorization", "Bearer ${BuildConfig.PRIVATE_KEY}")
 
             val request = requestBuilder.build()
             chain.proceed(request)

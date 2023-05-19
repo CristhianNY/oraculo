@@ -7,7 +7,6 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface GptApi {
-
-    @POST("v1/completions")
-    suspend fun callCompletionEndpoint(@Body request: GptRequestEntity): Response<GptResponseEntity>
+    @POST("v1/chat/completions")
+    suspend fun getDreamFromGpt(@Body request: GptRequestEntity): Response<GptResponseEntity>
 }

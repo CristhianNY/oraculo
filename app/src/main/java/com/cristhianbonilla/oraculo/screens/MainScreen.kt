@@ -1,5 +1,6 @@
 package com.cristhianbonilla.oraculo.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,10 +13,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,25 +29,55 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.cristhianbonilla.oraculo.DreamState
+import com.cristhianbonilla.oraculo.DreamViewModel
+import com.cristhianbonilla.oraculo.MainActivity
 import com.cristhianbonilla.oraculo.R
 import com.cristhianbonilla.oraculo.router.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(navController: NavController) {
+fun MainScreen(navController: NavController, viewModel: DreamViewModel) {
     val scrollState = rememberScrollState()
-
     var text by remember {
         mutableStateOf("")
     }
+    val context = LocalContext.current
+
     val screenHeight = LocalConfiguration.current.screenHeightDp
+
+    val state by viewModel.state.collectAsState()
+
+    var error by remember { mutableStateOf("") }
+
+    LaunchedEffect(key1 = viewModel) {
+        viewModel.state.collect { state ->
+            when (state) {
+                is DreamState.SuccessDream -> {
+                    val dreamState = state as DreamState.SuccessDream
+                    navController.navigate(Screen.DetailScreen.withArgs(dreamState.meaning))
+                    viewModel.setState(DreamState.InitState)
+                }
+                is DreamState.Error -> {
+                    Toast.makeText(context, "Error", Toast.LENGTH_LONG).show()
+                }
+                is DreamState.RequestDreamMeaning -> {
+                    viewModel.getDream(text)
+                }
+                else -> {
+                    // Handle other states
+                }
+            }
+        }
+    }
 
     val topSpacing = (screenHeight * 0.3f).dp
     Box(
@@ -64,40 +98,58 @@ fun MainScreen(navController: NavController) {
                 .padding(16.dp)
                 .verticalScroll(scrollState)
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                // Espacio para mover el LottieAnimation hacia abajo.
-                Spacer(modifier = Modifier.height(topSpacing))
-                Text(
-                    text = "Ingresa tu sueño",
-                    style = TextStyle(fontSize = 24.sp, fontWeight = FontWeight.Bold),
-                    color = Color.White,
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                TextField(
-                    value = text,
-                    onValueChange = { text = it },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(min = 100.dp, max = 400.dp),
-                    textStyle = TextStyle(
-                        color = Color.Black,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
+            if (state is DreamState.Loading) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            } else {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // Espacio para mover el LottieAnimation hacia abajo.
+                    Spacer(modifier = Modifier.height(topSpacing))
+                    Text(
+                        text = "Ingresa tu sueño",
+                        style = TextStyle(fontSize = 24.sp, fontWeight = FontWeight.Bold),
+                        color = Color.White,
                     )
-                )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
-                Button(onClick = {
-                    navController.navigate(Screen.DetailScreen.withArgs(text))
-                }) {
-                    Text(text = "Interpretar tu sueño")
+                    TextField(
+                        value = text,
+                        onValueChange = {
+                            text = it
+                            if (it.isNotBlank()) {
+                                error = ""
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = 100.dp, max = 400.dp),
+                        textStyle = TextStyle(
+                            color = Color.Black,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Button(onClick = {
+                        if (text.isBlank()) {
+                            error = "Este campo es requerido"
+                        } else {
+                            viewModel.getDream(text)
+                        }
+                    }) {
+                        Text(text = "Interpretar tu sueño")
+                    }
+
+                    Button(onClick = { (context as MainActivity).showRewardedAd() }) {
+                        Text("Mostrar anuncio recompensado")
+                    }
                 }
             }
+
         }
     }
 }

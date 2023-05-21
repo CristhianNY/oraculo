@@ -80,20 +80,17 @@ class MainActivity : ComponentActivity() {
             }
 
             override fun onAdImpression() {
-                // Called when an impression is recorded for an ad.
-                Log.d(TAG, "Ad recorded an impression.")
             }
 
             override fun onAdShowedFullScreenContent() {
-                // Called when ad is shown.
-                Log.d(TAG, "Ad showed fullscreen content.")
+                viewModel.getDream(viewModel.dreamText.value.orEmpty())
             }
         }
 
         rewardedAd?.show(this) { rewardItem ->
             loadRewardedAd()
             lifecycleScope.launch {
-                viewModel.setState(DreamState.RequestDreamMeaning)
+                viewModel.setState(DreamState.Loading)
             }
         }
     }

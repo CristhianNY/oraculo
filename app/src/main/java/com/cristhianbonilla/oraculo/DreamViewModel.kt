@@ -1,18 +1,14 @@
 package com.cristhianbonilla.oraculo
 
-import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cristhianbonilla.oraculo.domain.GptRepository
 import com.cristhianbonilla.oraculo.domain.GptRequest
 import com.cristhianbonilla.oraculo.domain.MessageRequest
 import com.cristhianbonilla.oraculo.util.ResultDomain
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.rewarded.RewardedAd
-import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,6 +20,9 @@ class DreamViewModel @Inject constructor(
 
 
     val state = MutableStateFlow<DreamState>(DreamState.InitState)
+
+    val _dreamText = MutableLiveData<String>()
+    val dreamText: LiveData<String> get() = _dreamText
     fun getDream(dreamText: String) {
         val gptRequest = GptRequest(
             model = "gpt-3.5-turbo",
@@ -55,5 +54,9 @@ class DreamViewModel @Inject constructor(
 
     suspend fun setState(dreamState: DreamState) {
         state.emit(dreamState)
+    }
+
+    fun setText(text: String) {
+        _dreamText.value = text
     }
 }

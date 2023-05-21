@@ -66,12 +66,15 @@ fun MainScreen(navController: NavController, viewModel: DreamViewModel) {
                     navController.navigate(Screen.DetailScreen.withArgs(dreamState.meaning))
                     viewModel.setState(DreamState.InitState)
                 }
+
                 is DreamState.Error -> {
                     Toast.makeText(context, "Error", Toast.LENGTH_LONG).show()
                 }
+
                 is DreamState.RequestDreamMeaning -> {
-                    viewModel.getDream(text)
+                    // Nothing
                 }
+
                 else -> {
                     // Handle other states
                 }
@@ -99,7 +102,19 @@ fun MainScreen(navController: NavController, viewModel: DreamViewModel) {
                 .verticalScroll(scrollState)
         ) {
             if (state is DreamState.Loading) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Spacer(modifier = Modifier.height(topSpacing))
+                    CircularProgressIndicator()
+                    Text(
+                        text = "Estamos consultando al oráculo tu sueño...",
+                        style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold),
+                        color = Color.White,
+                        modifier = Modifier.padding(top = 8.dp) // Añade un espacio entre el spinner y el texto.
+                    )
+                }
             } else {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -118,6 +133,7 @@ fun MainScreen(navController: NavController, viewModel: DreamViewModel) {
                         value = text,
                         onValueChange = {
                             text = it
+                            viewModel.setText(text)
                             if (it.isNotBlank()) {
                                 error = ""
                             }
@@ -134,18 +150,8 @@ fun MainScreen(navController: NavController, viewModel: DreamViewModel) {
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    Button(onClick = {
-                        if (text.isBlank()) {
-                            error = "Este campo es requerido"
-                        } else {
-                            viewModel.getDream(text)
-                        }
-                    }) {
-                        Text(text = "Interpretar tu sueño")
-                    }
-
                     Button(onClick = { (context as MainActivity).showRewardedAd() }) {
-                        Text("Mostrar anuncio recompensado")
+                        Text("Interpretar tu sueño")
                     }
                 }
             }
